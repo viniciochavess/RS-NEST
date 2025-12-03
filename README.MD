@@ -36,6 +36,7 @@ npm install
 3. Crie o arquivo `.env` na raiz do projeto:
 ```env
 DATABASE_URL="postgresql://nest_rs:nest_rs_password@localhost:5432/nest_rs_db?schema=public"
+PORT=3333
 ```
 
 4. Inicie o banco de dados PostgreSQL com Docker:
@@ -85,7 +86,7 @@ npm run start:debug
 npm run start:prod
 ```
 
-O servidor iniciará na porta `3333` por padrão.
+O servidor iniciará na porta definida na variável `PORT` do arquivo `.env` (padrão: `4000`).
 
 ## 📡 API Endpoints
 
@@ -195,6 +196,7 @@ nest-rs/
 │   ├── generated/
 │   │   └── prisma/            # Cliente Prisma gerado
 │   ├── app.module.ts          # Módulo principal
+│   ├── env.ts                 # Schema de validação de variáveis de ambiente
 │   └── main.ts                # Entry point
 ├── data/
 │   └── pg/                    # Dados do PostgreSQL (gitignored)
@@ -210,13 +212,26 @@ O Prisma está configurado para:
 - Conectar via variável de ambiente `DATABASE_URL`
 - Lifecycle hooks do NestJS (`OnModuleInit` e `OnModuleDestroy`) para gerenciar conexões
 
+## ⚙️ Variáveis de Ambiente
+
+O projeto utiliza `@nestjs/config` com validação via Zod:
+
+| Variável | Tipo | Padrão | Descrição |
+|----------|------|--------|-----------|
+| `DATABASE_URL` | string (URL) | - | URL de conexão do PostgreSQL |
+| `PORT` | number | 4000 | Porta do servidor |
+
+As variáveis são validadas automaticamente na inicialização da aplicação.
+
 ## 🛡️ Validação e Segurança
 
 O projeto implementa:
 - **Validação de dados** com Zod através de custom pipe (`ZodValidationPipe`)
+- **Validação de variáveis de ambiente** com schema Zod tipado
 - **Hash de senhas** usando bcryptjs (salt rounds: 10)
 - **Validação de email** para garantir formato correto
 - **Mensagens de erro estruturadas** com detalhes dos campos inválidos
+- **ConfigService tipado** com TypeScript para type-safety
 
 ## 🧪 Testando a API
 
