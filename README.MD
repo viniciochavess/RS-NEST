@@ -11,6 +11,8 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 - [Prisma](https://www.prisma.io/) - ORM moderno para Node.js e TypeScript
 - [PostgreSQL](https://www.postgresql.org/) - Banco de dados relacional
 - [Docker](https://www.docker.com/) - Containerização
+- [Zod](https://zod.dev/) - Validação de schemas TypeScript-first
+- [bcryptjs](https://github.com/dcodeIO/bcrypt.js) - Hash de senhas
 
 ## 📋 Pré-requisitos
 
@@ -99,9 +101,29 @@ Cria uma nova conta de usuário.
 }
 ```
 
+**Validações:**
+- `email` - Deve ser um email válido
+- `password` - Mínimo de 6 caracteres
+- `name` - Mínimo de 2 caracteres
+
 **Responses:**
 - `201` - Conta criada com sucesso
+- `400` - Dados de validação inválidos
 - `409` - Usuário já existe (email duplicado)
+
+**Exemplo de erro de validação:**
+```json
+{
+  "message": "Validation failed",
+  "errors": {
+    "email": ["Invalid email"],
+    "password": ["String must contain at least 6 character(s)"],
+    "name": ["String must contain at least 2 character(s)"]
+  },
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
 
 **Exemplo de teste:**
 Utilize o arquivo `http/create-account.http` com a extensão REST Client do VS Code.
@@ -166,6 +188,8 @@ nest-rs/
 ├── src/
 │   ├── controllers/
 │   │   └── create-account.controller.ts  # Controller de criação de conta
+│   ├── pipes/
+│   │   └── zod-validation-pipes.ts        # Pipe de validação com Zod
 │   ├── prisma/
 │   │   └── prisma.service.ts  # Serviço do Prisma com lifecycle hooks
 │   ├── generated/
@@ -185,6 +209,14 @@ O Prisma está configurado para:
 - Usar o adaptador PostgreSQL (`@prisma/adapter-pg`) com Pool do `pg`
 - Conectar via variável de ambiente `DATABASE_URL`
 - Lifecycle hooks do NestJS (`OnModuleInit` e `OnModuleDestroy`) para gerenciar conexões
+
+## 🛡️ Validação e Segurança
+
+O projeto implementa:
+- **Validação de dados** com Zod através de custom pipe (`ZodValidationPipe`)
+- **Hash de senhas** usando bcryptjs (salt rounds: 10)
+- **Validação de email** para garantir formato correto
+- **Mensagens de erro estruturadas** com detalhes dos campos inválidos
 
 ## 🧪 Testando a API
 
