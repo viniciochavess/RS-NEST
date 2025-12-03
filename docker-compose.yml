@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: nest-rs-postgres
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: nest_rs
+      POSTGRES_PASSWORD: nest_rs_password
+      POSTGRES_DB: nest_rs_db
+      PGDATA: /data/postgres
+    volumes: 
+      - ./data/pg:/data/postgres
