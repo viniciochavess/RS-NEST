@@ -85,6 +85,27 @@ npm run start:prod
 
 O servidor iniciará na porta `3333` por padrão.
 
+## 📡 API Endpoints
+
+### POST /accounts
+Cria uma nova conta de usuário.
+
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "email": "johndoe@email.com",
+  "password": "123456"
+}
+```
+
+**Responses:**
+- `201` - Conta criada com sucesso
+- `409` - Usuário já existe (email duplicado)
+
+**Exemplo de teste:**
+Utilize o arquivo `http/create-account.http` com a extensão REST Client do VS Code.
+
 ## 🔨 Scripts disponíveis
 
 ```bash
@@ -137,20 +158,22 @@ docker-compose logs -f
 
 ```
 nest-rs/
+├── http/                      # Arquivos HTTP para testes
+│   └── create-account.http    # Teste do endpoint de criação de conta
 ├── prisma/
 │   ├── schema.prisma          # Schema do Prisma
 │   └── migrations/            # Migrations do banco
 ├── src/
+│   ├── controllers/
+│   │   └── create-account.controller.ts  # Controller de criação de conta
 │   ├── prisma/
-│   │   └── prisma.service.ts  # Serviço do Prisma
+│   │   └── prisma.service.ts  # Serviço do Prisma com lifecycle hooks
+│   ├── generated/
+│   │   └── prisma/            # Cliente Prisma gerado
 │   ├── app.module.ts          # Módulo principal
-│   ├── app.controller.ts      # Controller principal
-│   ├── app.service.ts         # Service principal
 │   └── main.ts                # Entry point
-├── generated/
-│   └── prisma/                # Cliente Prisma gerado
 ├── data/
-│   └── pg/                    # Dados do PostgreSQL
+│   └── pg/                    # Dados do PostgreSQL (gitignored)
 ├── docker-compose.yml         # Configuração Docker
 └── package.json
 ```
@@ -158,9 +181,23 @@ nest-rs/
 ## 🔑 Configuração do Prisma
 
 O Prisma está configurado para:
-- Gerar o cliente na pasta `generated/prisma`
-- Usar o adaptador PostgreSQL (`@prisma/adapter-pg`)
+- Gerar o cliente na pasta `src/generated/prisma` com formato CommonJS
+- Usar o adaptador PostgreSQL (`@prisma/adapter-pg`) com Pool do `pg`
 - Conectar via variável de ambiente `DATABASE_URL`
+- Lifecycle hooks do NestJS (`OnModuleInit` e `OnModuleDestroy`) para gerenciar conexões
+
+## 🧪 Testando a API
+
+Você pode testar os endpoints usando:
+
+1. **REST Client (VS Code Extension)**: Utilize os arquivos `.http` na pasta `http/`
+2. **Insomnia/Postman**: Importe as requisições ou crie manualmente
+3. **cURL**: 
+```bash
+curl -X POST http://localhost:3333/accounts \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"johndoe@email.com","password":"123456"}'
+```
 
 ## 📝 Licença
 
