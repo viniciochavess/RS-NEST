@@ -13,6 +13,8 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 - [Docker](https://www.docker.com/) - Containerização
 - [Zod](https://zod.dev/) - Validação de schemas TypeScript-first
 - [bcryptjs](https://github.com/dcodeIO/bcrypt.js) - Hash de senhas
+- [@nestjs/jwt](https://docs.nestjs.com/security/authentication#jwt-functionality) - Autenticação JWT
+- [@nestjs/passport](https://docs.nestjs.com/security/authentication#passport-integration) - Estratégias de autenticação
 
 ## 📋 Pré-requisitos
 
@@ -37,6 +39,7 @@ npm install
 ```env
 DATABASE_URL="postgresql://nest_rs:nest_rs_password@localhost:5432/nest_rs_db?schema=public"
 PORT=3333
+JWT_SECRET="sua_chave_jwt_supersegura"
 ```
 
 4. Inicie o banco de dados PostgreSQL com Docker:
@@ -196,6 +199,8 @@ nest-rs/
 │   ├── generated/
 │   │   └── prisma/            # Cliente Prisma gerado
 │   ├── app.module.ts          # Módulo principal
+│   ├── auth/
+│   │   └── auth.module.ts     # Módulo de autenticação JWT/Passport
 │   ├── env.ts                 # Schema de validação de variáveis de ambiente
 │   └── main.ts                # Entry point
 ├── data/
@@ -220,6 +225,7 @@ O projeto utiliza `@nestjs/config` com validação via Zod:
 |----------|------|--------|-----------|
 | `DATABASE_URL` | string (URL) | - | URL de conexão do PostgreSQL |
 | `PORT` | number | 4000 | Porta do servidor |
+| `JWT_SECRET` | string (min 8) | - | Chave secreta para assinar tokens JWT |
 
 As variáveis são validadas automaticamente na inicialização da aplicação.
 
